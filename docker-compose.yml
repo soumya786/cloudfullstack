@@ -1,0 +1,37 @@
+
+
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 304599
+      POSTGRES_DB: cloudfullstack
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgre:/var/lib/postgresql/data
+
+  springboot-app:
+    build: .
+    container_name: springboot-app
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres-db
+    networks:
+      - app-network
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/cloudfullstack
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 304599
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgre:
